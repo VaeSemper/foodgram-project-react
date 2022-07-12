@@ -1,9 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.core.validators import MinValueValidator
 from django.db import models
 
-
-LIMIT_MIN_INT = [MinValueValidator(1)]
+from recipes.validators import LIMIT_MIN_INT, validate_hex_code
 
 User = get_user_model()
 
@@ -14,7 +12,8 @@ def user_image_upload_path(instance, filename):
 
 class Tags(models.Model):
     name = models.CharField('tag name', max_length=50, unique=True)
-    color = models.CharField('color HEX code', max_length=7, unique=True)
+    color = models.CharField('color HEX code', max_length=7, unique=True,
+                             validators=[validate_hex_code])
     slug = models.SlugField('slug', max_length=50, unique=True)
 
     class Meta:
