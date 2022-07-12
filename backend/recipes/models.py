@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
+
 LIMIT_MIN_INT = [MinValueValidator(1)]
 
 User = get_user_model()
@@ -18,6 +19,7 @@ class Tags(models.Model):
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'tags'
 
     def __str__(self):
         return self.name
@@ -25,10 +27,11 @@ class Tags(models.Model):
 
 class Ingredients(models.Model):
     name = models.CharField('ingredient name', max_length=50)
-    measurement_unit = models.CharField('unit', max_length=10)
+    measurement_unit = models.CharField('measurement unit', max_length=10)
 
     class Meta:
         ordering = ['name']
+        verbose_name_plural = 'ingredients'
         indexes = [
             models.Index(
                 name='ingredients_idx',
@@ -80,6 +83,9 @@ class Recipes(models.Model):
     text = models.TextField('recipe description')
     image = models.ImageField('dish image', upload_to=user_image_upload_path)
     cooking_time = models.PositiveSmallIntegerField(validators=LIMIT_MIN_INT)
+
+    class Meta:
+        verbose_name_plural = 'recipes'
 
     def __str__(self):
         return self.name
