@@ -3,14 +3,13 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-
 LIMIT_MIN_INT = [MinValueValidator(1)]
 
 User = get_user_model()
 
 
 def user_image_upload_path(instance, filename):
-    return 'recipes/images/{0}/{1}'.format(instance.user.username, filename)
+    return 'recipes/images/{0}/{1}'.format(instance.author.username, filename)
 
 
 class Tags(models.Model):
@@ -60,7 +59,7 @@ class IngredientInRecipe(models.Model):
         'amount of ingredients', validators=LIMIT_MIN_INT, null=True)
 
     def __str__(self):
-        return self.ingredient
+        return self.ingredient.name
 
 
 class Recipes(models.Model):
@@ -103,7 +102,7 @@ class Follow(models.Model):
                                                name='unique_users')]
 
     def __str__(self):
-        return self.follower
+        return self.follower.username
 
 
 class FavoriteRecipe(models.Model):
@@ -117,7 +116,7 @@ class FavoriteRecipe(models.Model):
                                                name='unique_fav_recipes')]
 
     def __str__(self):
-        return self.user
+        return self.user.username
 
 
 class RecipeInCart(models.Model):
@@ -133,4 +132,4 @@ class RecipeInCart(models.Model):
         ]
 
     def __str__(self):
-        return self.user
+        return self.user.username
