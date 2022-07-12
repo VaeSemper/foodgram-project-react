@@ -130,3 +130,6 @@ dmypy.json
 
 # .idea
 .idea
+
+# Django migrations
+/backend/recipes/migrations/
