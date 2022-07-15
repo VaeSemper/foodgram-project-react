@@ -11,5 +11,7 @@ router = DefaultRouter()
 router.register(r'tags', TagsViewSet)
 
 urlpatterns = [
-    path('', include(router.urls))
+    path('', include(router.urls)),
+    path('auth/', include('djoser.urls')),
+    path('auth/', include('djoser.urls.authtoken')),
 ]
