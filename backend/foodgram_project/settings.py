@@ -29,6 +29,8 @@ INSTALLED_APPS = [
     'recipes.apps.RecipesConfig',
     'colorfield',
     'rest_framework',
+    'rest_framework.authtoken',
+    'djoser',
 ]
 
 MIDDLEWARE = [
@@ -113,13 +115,8 @@ DEFAULT_FROM_EMAIL = 'api_admin@foodgram.api'
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
     ),
-}
-
-SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(days=10),
-    'AUTH_HEADER_TYPES': ('Bearer',),
 }
 
 JAZZMIN_SETTINGS = {
