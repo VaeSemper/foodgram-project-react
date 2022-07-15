@@ -1,10 +1,15 @@
 from django.contrib import admin
+from django.contrib.auth import get_user_model
+from django.contrib.auth.admin import UserAdmin
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes, Tags)
 
-
 LINES_PER_PAGE = 20
+
+User = get_user_model()
+
+UserAdmin.list_filter = ('username', 'email',)
 
 
 @admin.register(Tags)
@@ -38,8 +43,9 @@ class RecipesAdmin(admin.ModelAdmin):
     list_per_page = LINES_PER_PAGE
     search_fields = ('name',)
 
-    def recipe_description(self, obj):
-        return obj.text[:300] + '...'
+    @staticmethod
+    def recipe_description(obj):
+        return obj.text[:100] + '...'
 
 
 @admin.register(Follow)
