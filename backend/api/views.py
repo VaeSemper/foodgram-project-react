@@ -11,3 +11,4 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
