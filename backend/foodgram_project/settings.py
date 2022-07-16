@@ -119,6 +119,13 @@ REST_FRAMEWORK = {
     ),
 }
 
+DJOSER = {
+    'LOGIN_FIELD': 'email',
+    'SERIALIZERS': {
+        'user': 'api.serializers.CustomUserSerializer',
+    }
+}
+
 JAZZMIN_SETTINGS = {
     'welcome_sign': 'Welcome Home, ashen one.',
     'copyright': 'VaeSemper',
