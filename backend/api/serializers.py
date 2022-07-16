@@ -1,8 +1,10 @@
 from django.contrib.auth import get_user_model
+from djoser.serializers import UserCreateSerializer
 from rest_framework import serializers
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
-                            Ingredients, RecipeInCart, Recipes, Tags)
+                            Ingredients, RecipeInCart, Recipes,
+                            Tags)
 
 User = get_user_model()
 
@@ -38,3 +40,9 @@ class CustomUserSerializer(serializers.ModelSerializer):
         if user.is_anonymous:
             return False
         return Follow.objects.filter(follower=user, author=obj).exists()
+
+
+class CustomUserCreateSerializer(UserCreateSerializer):
+    class Meta:
+        model = User
+        fields = ('email', 'username', 'first_name', 'last_name', 'password',)
