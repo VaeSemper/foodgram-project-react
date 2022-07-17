@@ -1,4 +1,5 @@
-from rest_framework import viewsets
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import filters, viewsets
 
 from api.permissions import IsAdminOrReadOnly
 from api.serializers import (TagsSerializer, IngredientsSerializer,
@@ -12,3 +13,12 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = TagsSerializer
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
+
+
+class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = Ingredients.objects.all()
+    serializer_class = IngredientsSerializer
+    permission_classes = (IsAdminOrReadOnly,)
+    pagination_class = None
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('name',)
