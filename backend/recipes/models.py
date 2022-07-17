@@ -50,11 +50,17 @@ class Ingredients(models.Model):
 
 
 class IngredientInRecipe(models.Model):
+    recipe = models.ForeignKey(
+        'Recipes',
+        verbose_name='ingredient in recipe',
+        related_name='recipe',
+        on_delete=models.CASCADE,
+    )
     ingredient = models.ForeignKey(
         Ingredients,
         verbose_name='ingredient name',
         related_name='ingredient_in_recipes',
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
     )
     amount = models.PositiveSmallIntegerField(
         'amount of ingredients', validators=LIMIT_MIN_INT, null=True)
@@ -77,9 +83,10 @@ class Recipes(models.Model):
         related_name='recipes',
     )
     ingredients = models.ManyToManyField(
-        IngredientInRecipe,
+        Ingredients,
         verbose_name='ingredients_in_recipe',
         related_name='recipes',
+        through='IngredientInRecipe',
     )
     text = models.TextField('recipe description')
     image = models.ImageField('dish image', upload_to=user_image_upload_path)

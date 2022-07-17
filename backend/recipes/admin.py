@@ -28,7 +28,7 @@ class IngredientsAdmin(admin.ModelAdmin):
 
 @admin.register(IngredientInRecipe)
 class IngredientInRecipeAdmin(admin.ModelAdmin):
-    list_display = ('ingredient', 'amount', 'get_measurement_unit')
+    list_display = ('recipe', 'ingredient', 'amount', 'get_measurement_unit')
     list_per_page = LINES_PER_PAGE
 
     @admin.display(description='measurement unit')
