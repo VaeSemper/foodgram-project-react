@@ -12,18 +12,19 @@ from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
 User = get_user_model()
 
 
-def get_obj_of_current_user(serializer, obj, model, method):
+def get_obj_of_current_user(serializer, instance, model, method):
     user = serializer.context['request'].user
     if user.is_anonymous:
         return False
     if method == 'exists':
         if model is Follow:
-            return model.objects.filter(follower=user, author=obj).exists()
+            return model.objects.filter(follower=user,
+                                        author=instance).exists()
         elif model is RecipeInCart:
-            return model.objects.filter(user=user, recipe=obj).exists()
+            return model.objects.filter(user=user, recipe=instance).exists()
     elif method == 'count':
         if model is Recipes:
-            return model.objects.filter(author=obj).count()
+            return model.objects.filter(author=instance).count()
     return False
 
 
@@ -106,13 +107,20 @@ class FollowSerializer(serializers.ModelSerializer):
     first_name = serializers.ReadOnlyField(source='author.first_name')
     last_name = serializers.ReadOnlyField(source='author.last_name')
     is_subscribed = serializers.SerializerMethodField()
-    recipes = ShortRecipesSerializer(many=True, source='author.recipes',)
+    recipes = serializers.SerializerMethodField()
     recipes_count = serializers.SerializerMethodField()
 
     class Meta:
         model = Follow
         fields = ('id', 'username', 'email', 'first_name', 'last_name',
                   'is_subscribed', 'recipes', 'recipes_count',)
+
+    def get_recipes(self, obj):
+        recipes_limit = self.context['request'].GET.get('recipes_limit')
+        query = obj.author.recipes.all()
+        if recipes_limit:
+            query = query[:int(recipes_limit)]
+        return ShortRecipesSerializer(instance=query, many=True).data
 
     def get_is_subscribed(self, obj):
         return get_obj_of_current_user(self, obj.author, Follow, 'exists')
