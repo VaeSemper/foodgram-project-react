@@ -88,11 +88,14 @@ class Recipes(models.Model):
         related_name='recipes',
         through='IngredientInRecipe',
     )
+    pub_date = models.DateTimeField(verbose_name='publication date',
+                                    auto_now_add=True,)
     text = models.TextField('recipe description')
     image = models.ImageField('dish image', upload_to=user_image_upload_path)
     cooking_time = models.PositiveSmallIntegerField(validators=LIMIT_MIN_INT)
 
     class Meta:
+        ordering = ['pub_date']
         verbose_name_plural = 'recipes'
 
     def __str__(self):
