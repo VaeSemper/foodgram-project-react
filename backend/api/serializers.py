@@ -1,6 +1,9 @@
 from django.contrib.auth import get_user_model
+from django.db import models
 from djoser.serializers import UserCreateSerializer
+from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
+from rest_framework.generics import get_object_or_404
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes,
@@ -9,14 +12,18 @@ from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
 User = get_user_model()
 
 
-def get_obj_of_current_user(serializer, obj, model):
+def get_obj_of_current_user(serializer, obj, model, method):
     user = serializer.context['request'].user
     if user.is_anonymous:
         return False
-    elif model is Follow:
-        return model.objects.filter(follower=user, author=obj).exists()
-    elif model is RecipeInCart:
-        return model.objects.filter(user=user, recipe=obj).exists()
+    if method == 'exists':
+        if model is Follow:
+            return model.objects.filter(follower=user, author=obj).exists()
+        elif model is RecipeInCart:
+            return model.objects.filter(user=user, recipe=obj).exists()
+    elif method == 'count':
+        if model is Recipes:
+            return model.objects.filter(author=obj).count()
     return False
 
 
@@ -29,7 +36,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
                   'is_subscribed',)
 
     def get_is_subscribed(self, obj):
-        return get_obj_of_current_user(self, obj, Follow)
+        return get_obj_of_current_user(self, obj, Follow, 'exists')
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
@@ -66,10 +73,10 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 class RecipesSerializer(serializers.ModelSerializer):
     tags = TagsSerializer(many=True)
     author = CustomUserSerializer()
-    ingredients = IngredientInRecipeSerializer(many=True,
-                                               source='recipe')
+    ingredients = IngredientInRecipeSerializer(many=True, source='recipe')
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    image = Base64ImageField()
 
     class Meta:
         model = Recipes
@@ -78,7 +85,37 @@ class RecipesSerializer(serializers.ModelSerializer):
                   'cooking_time',)
 
     def get_is_favorited(self, obj):
-        return get_obj_of_current_user(self, obj, RecipeInCart)
+        return get_obj_of_current_user(self, obj, RecipeInCart, 'exists')
 
     def get_is_in_shopping_cart(self, obj):
-        return get_obj_of_current_user(self, obj, RecipeInCart)
+        return get_obj_of_current_user(self, obj, RecipeInCart, 'exists')
+
+
+class ShortRecipesSerializer(serializers.ModelSerializer):
+    image = Base64ImageField()
+
+    class Meta:
+        model = Recipes
+        fields = ('id', 'name', 'image', 'cooking_time')
+
+
+class FollowSerializer(serializers.ModelSerializer):
+    id = serializers.ReadOnlyField(source='author.id')
+    email = serializers.ReadOnlyField(source='author.email')
+    username = serializers.ReadOnlyField(source='author.username')
+    first_name = serializers.ReadOnlyField(source='author.first_name')
+    last_name = serializers.ReadOnlyField(source='author.last_name')
+    is_subscribed = serializers.SerializerMethodField()
+    recipes = ShortRecipesSerializer(many=True, source='author.recipes',)
+    recipes_count = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Follow
+        fields = ('id', 'username', 'email', 'first_name', 'last_name',
+                  'is_subscribed', 'recipes', 'recipes_count',)
+
+    def get_is_subscribed(self, obj):
+        return get_obj_of_current_user(self, obj.author, Follow, 'exists')
+
+    def get_recipes_count(self, obj):
+        return get_obj_of_current_user(self, obj.author, Recipes, 'count')
