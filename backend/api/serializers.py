@@ -22,6 +22,8 @@ def get_obj_of_current_user(serializer, instance, model, method):
                                         author=instance).exists()
         elif model is RecipeInCart:
             return model.objects.filter(user=user, recipe=instance).exists()
+        elif model is FavoriteRecipe:
+            return model.objects.filter(user=user, recipe=instance).exists()
     elif method == 'count':
         if model is Recipes:
             return model.objects.filter(author=instance).count()
@@ -86,7 +88,7 @@ class RecipesSerializer(serializers.ModelSerializer):
                   'cooking_time',)
 
     def get_is_favorited(self, obj):
-        return get_obj_of_current_user(self, obj, RecipeInCart, 'exists')
+        return get_obj_of_current_user(self, obj, FavoriteRecipe, 'exists')
 
     def get_is_in_shopping_cart(self, obj):
         return get_obj_of_current_user(self, obj, RecipeInCart, 'exists')
@@ -127,3 +129,15 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_recipes_count(self, obj):
         return get_obj_of_current_user(self, obj.author, Recipes, 'count')
+
+
+class FavoriteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FavoriteRecipe
+        fields = ('user', 'recipe',)
+
+
+class CartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = RecipeInCart
+        fields = ('user', 'recipe',)
