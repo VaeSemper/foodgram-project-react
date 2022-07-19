@@ -111,13 +111,8 @@ class SubscribeViewSet(viewsets.ModelViewSet):
 
     def perform_destroy(self, serializer):
         follower = self.request.user
-        print(follower)
         author = get_object_or_404(User, id=self.kwargs['pk'])
-        print(self.kwargs['pk'])
         query = Follow.objects.filter(follower=follower, author=author)
-        print(follower)
-        print(author)
-        print(query)
         if not query.exists():
             raise ValidationError({'errors': 'You are not subscribe on this '
                                              'user.'})
