@@ -2,23 +2,18 @@ from django.contrib.auth import get_user_model
 from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from djoser.views import UserViewSet
-from rest_framework import filters, permissions, status, viewsets
-from rest_framework.decorators import action, api_view, permission_classes
+from rest_framework import filters, status, viewsets
+from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import (IsAuthenticatedOrReadOnly,
-                                        IsAuthenticated)
+from rest_framework.permissions import (IsAuthenticated)
 from rest_framework.response import Response
 
-from api.filters import RecipeFilter
-from api.permissions import IsAdminOrReadOnly
+from api.permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
 from api.serializers import (CartSerializer, FavoriteSerializer,
-                             FollowSerializer,
-                             TagsSerializer,
-                             IngredientsSerializer,
-                             RecipesSerializer, )
-from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
-                            Ingredients, RecipeInCart, Recipes, Tags)
+                             FollowSerializer, IngredientsSerializer,
+                             RecipesSerializer, TagsSerializer)
+from recipes.models import (FavoriteRecipe, Follow, Ingredients, RecipeInCart,
+                            Recipes, Tags)
 
 User = get_user_model()
 
@@ -42,9 +37,9 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
     serializer_class = RecipesSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+    permission_classes = (IsAdminOrAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
-    filterset_class = RecipeFilter
+    # filterset_class = RecipeFilter
 
     def add_delete_obj(self, request, pk, serializer_obj, model_obj):
         recipe = Recipes.objects.get(pk=pk)

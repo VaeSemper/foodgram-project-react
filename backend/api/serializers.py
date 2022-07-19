@@ -1,10 +1,7 @@
 from django.contrib.auth import get_user_model
-from django.db import models
 from djoser.serializers import UserCreateSerializer
 from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
-from rest_framework.generics import get_object_or_404
-from rest_framework.validators import UniqueTogetherValidator
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes,
@@ -114,6 +111,15 @@ class RecipesSerializer(serializers.ModelSerializer):
         recipe.tags.set(tags)
         self.create_ingredients(ingredients, recipe)
         return recipe
+
+    def update(self, instance, validated_data):
+        instance.tags.clear()
+        tags = validated_data.pop('tags')
+        instance.tags.set(tags)
+        IngredientInRecipe.objects.filter(recipe=instance).delete()
+        ingredients = self.context['request'].data.pop('ingredients')
+        self.create_ingredients(ingredients, instance)
+        return super().update(instance, validated_data)
 
     def get_is_favorited(self, obj):
         return get_obj_of_current_user(self, obj, FavoriteRecipe, 'exists')
