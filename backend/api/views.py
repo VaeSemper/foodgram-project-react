@@ -48,7 +48,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         pass
 
-    def add_delete_object(self, request, pk, serializer_obj, model_obj):
+    def add_delete_obj(self, request, pk, serializer_obj, model_obj):
         recipe = Recipes.objects.get(pk=pk)
         data = {
             'user': request.user.pk,
@@ -73,13 +73,12 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(detail=True, methods=['POST', 'DELETE'])
     def favorite(self, request, pk=None):
-        return self.add_delete_object(request, pk, FavoriteSerializer,
-                                      FavoriteRecipe)
+        return self.add_delete_obj(request, pk, FavoriteSerializer,
+                                   FavoriteRecipe)
 
     @action(detail=True, methods=['POST', 'DELETE'])
     def shopping_cart(self, request, pk=None):
-        return self.add_delete_object(request, pk, CartSerializer,
-                                      RecipeInCart)
+        return self.add_delete_obj(request, pk, CartSerializer, RecipeInCart)
 
 
 class FollowViewSet(viewsets.ModelViewSet):
