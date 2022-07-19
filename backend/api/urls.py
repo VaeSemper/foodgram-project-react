@@ -18,5 +18,5 @@ urlpatterns = [
     path('', include('djoser.urls')),
     path('auth/', include('djoser.urls.authtoken')),
     path('users/<int:pk>/subscribe/', SubscribeViewSet.as_view(
-        {'post': 'create', 'delete': 'destroy'}))
+        {'post': 'create', 'delete': 'destroy'})),
 ]

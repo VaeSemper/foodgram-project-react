@@ -74,10 +74,17 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
         fields = ('id', 'name', 'measurement_unit', 'amount',)
 
 
+class TagPrimaryKeyRelatedSerializer(serializers.PrimaryKeyRelatedField):
+    def to_representation(self, value):
+        return TagsSerializer(value).data
+
+
 class RecipesSerializer(serializers.ModelSerializer):
-    tags = TagsSerializer(many=True)
-    author = CustomUserSerializer()
-    ingredients = IngredientInRecipeSerializer(many=True, source='recipe')
+    tags = TagPrimaryKeyRelatedSerializer(queryset=Tags.objects.all(),
+                                          many=True)
+    author = CustomUserSerializer(read_only=True)
+    ingredients = IngredientInRecipeSerializer(many=True, source='recipe',
+                                               read_only=True)
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
     image = Base64ImageField()
@@ -88,6 +95,26 @@ class RecipesSerializer(serializers.ModelSerializer):
                   'is_in_shopping_cart', 'name', 'text', 'image',
                   'cooking_time',)
 
+    def create_ingredients(self, ingredients, recipe):
+        for ingredient in ingredients:
+            IngredientInRecipe.objects.create(recipe=recipe,
+                                              ingredient_id=ingredient['id'],
+                                              amount=ingredient['amount'])
+
+    def create(self, validated_data):
+        author = self.context.get('request').user
+        tags = validated_data.pop('tags')
+        image = validated_data.pop('image')
+        ingredients = self.context['request'].data.pop('ingredients')
+        recipe = Recipes.objects.create(
+            author=author,
+            image=image,
+            **validated_data
+        )
+        recipe.tags.set(tags)
+        self.create_ingredients(ingredients, recipe)
+        return recipe
+
     def get_is_favorited(self, obj):
         return get_obj_of_current_user(self, obj, FavoriteRecipe, 'exists')
 
@@ -96,7 +123,7 @@ class RecipesSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipesSerializer(serializers.ModelSerializer):
-    image = Base64ImageField()
+    image = Base64ImageField(read_only=True)
 
     class Meta:
         model = Recipes
