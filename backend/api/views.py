@@ -5,7 +5,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
-from rest_framework.permissions import (IsAuthenticated)
+from rest_framework.permissions import (IsAuthenticated,
+                                        IsAuthenticatedOrReadOnly)
 from rest_framework.response import Response
 
 from api.permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
@@ -13,6 +14,7 @@ from api.serializers import (CartSerializer, FavoriteSerializer,
                              FollowSerializer, IngredientsSerializer,
                              RecipeCreateSerializer, RecipesSerializer,
                              TagsSerializer)
+from api.utils import add_delete_obj
 from recipes.models import (FavoriteRecipe, Follow, Ingredients, RecipeInCart,
                             Recipes, Tags)
 
@@ -37,44 +39,32 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 class RecipesViewSet(viewsets.ModelViewSet):
     queryset = Recipes.objects.all()
-    serializer_class = RecipesSerializer
-    permission_classes = (IsAdminOrAuthorOrReadOnly,)
     filter_backends = (DjangoFilterBackend,)
     # filterset_class = RecipeFilter
+
+    def get_permissions(self):
+        if self.action in ('update', 'partial_update',):
+            permission_classes = (IsAdminOrAuthorOrReadOnly,)
+        else:
+            permission_classes = (IsAuthenticatedOrReadOnly,)
+        return [permission() for permission in permission_classes]
 
     def get_serializer_class(self):
         if self.action in ('retrieve', 'list'):
             return RecipesSerializer
         return RecipeCreateSerializer
 
-    def add_delete_obj(self, request, pk, serializer_obj, model_obj):
-        recipe = Recipes.objects.get(pk=pk)
-        data = {'user': request.user.pk, 'recipe': recipe.pk}
-        serializer = serializer_obj(context={'request': request}, data=data)
-        serializer.is_valid(raise_exception=True)
-        if request.method == 'POST':
-            try:
-                serializer.save()
-                return Response(serializer.data,
-                                status=status.HTTP_201_CREATED)
-            except IntegrityError:
-                raise ValidationError({'errors': 'Recipe already added.'})
-        elif request.method == 'DELETE':
-            obj_to_delete = model_obj.objects.filter(**data)
-            if obj_to_delete.exists():
-                obj_to_delete.delete()
-                return Response(status=status.HTTP_204_NO_CONTENT)
-            return Response({'errors': 'No such object.'},
-                            status=status.HTTP_400_BAD_REQUEST)
-
     @action(detail=True, methods=['POST', 'DELETE'])
     def favorite(self, request, pk=None):
-        return self.add_delete_obj(request, pk, FavoriteSerializer,
-                                   FavoriteRecipe)
+        return add_delete_obj(request, pk, FavoriteSerializer, FavoriteRecipe)
 
     @action(detail=True, methods=['POST', 'DELETE'])
     def shopping_cart(self, request, pk=None):
-        return self.add_delete_obj(request, pk, CartSerializer, RecipeInCart)
+        return add_delete_obj(request, pk, CartSerializer, RecipeInCart)
+
+    @action(detail=False, methods=['GET'])
+    def download_shopping_cart(self, request):
+        pass
 
 
 class FollowViewSet(viewsets.ModelViewSet):
