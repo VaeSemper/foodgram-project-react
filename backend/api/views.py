@@ -11,7 +11,8 @@ from rest_framework.response import Response
 from api.permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
 from api.serializers import (CartSerializer, FavoriteSerializer,
                              FollowSerializer, IngredientsSerializer,
-                             RecipesSerializer, TagsSerializer)
+                             RecipeCreateSerializer, RecipesSerializer,
+                             TagsSerializer)
 from recipes.models import (FavoriteRecipe, Follow, Ingredients, RecipeInCart,
                             Recipes, Tags)
 
@@ -41,12 +42,14 @@ class RecipesViewSet(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     # filterset_class = RecipeFilter
 
+    def get_serializer_class(self):
+        if self.action in ('retrieve', 'list'):
+            return RecipesSerializer
+        return RecipeCreateSerializer
+
     def add_delete_obj(self, request, pk, serializer_obj, model_obj):
         recipe = Recipes.objects.get(pk=pk)
-        data = {
-            'user': request.user.pk,
-            'recipe': recipe.pk,
-        }
+        data = {'user': request.user.pk, 'recipe': recipe.pk}
         serializer = serializer_obj(context={'request': request}, data=data)
         serializer.is_valid(raise_exception=True)
         if request.method == 'POST':
