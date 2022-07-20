@@ -14,7 +14,7 @@ from api.serializers import (CartSerializer, FavoriteSerializer,
                              FollowSerializer, IngredientsSerializer,
                              RecipeCreateSerializer, RecipesSerializer,
                              TagsSerializer)
-from api.utils import add_delete_obj
+from api.utils import add_delete_obj, download_shopping_cart
 from recipes.models import (FavoriteRecipe, Follow, Ingredients, RecipeInCart,
                             Recipes, Tags)
 
@@ -64,7 +64,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
     @action(detail=False, methods=['GET'])
     def download_shopping_cart(self, request):
-        pass
+        return download_shopping_cart(request)
 
 
 class FollowViewSet(viewsets.ModelViewSet):

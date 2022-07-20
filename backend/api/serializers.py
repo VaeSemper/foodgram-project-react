@@ -4,28 +4,11 @@ from drf_extra_fields.fields import Base64ImageField
 from rest_framework import serializers
 from rest_framework.exceptions import ValidationError
 
+from api.utils import get_obj_of_current_user
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes, Tags)
 
 User = get_user_model()
-
-
-def get_obj_of_current_user(serializer, instance, model, method):
-    user = serializer.context['request'].user
-    if user.is_anonymous:
-        return False
-    if method == 'exists':
-        if model is Follow:
-            return model.objects.filter(follower=user,
-                                        author=instance).exists()
-        elif model is RecipeInCart:
-            return model.objects.filter(user=user, recipe=instance).exists()
-        elif model is FavoriteRecipe:
-            return model.objects.filter(user=user, recipe=instance).exists()
-    elif method == 'count':
-        if model is Recipes:
-            return model.objects.filter(author=instance).count()
-    return False
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
