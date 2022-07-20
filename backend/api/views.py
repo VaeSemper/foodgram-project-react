@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db import IntegrityError
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, status, viewsets
@@ -88,14 +87,7 @@ class SubscribeViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         follower = self.request.user
         author = get_object_or_404(User, id=self.kwargs['pk'])
-        if follower == author:
-            raise ValidationError({'errors': 'You cannot subscribe to '
-                                             'yourself.'})
-        try:
-            serializer.save(follower=follower, author=author)
-        except IntegrityError:
-            raise ValidationError({'errors': 'You cannot subscribe the same '
-                                             'user twice.'})
+        serializer.save(follower=follower, author=author)
 
     def perform_destroy(self, serializer):
         follower = self.request.user

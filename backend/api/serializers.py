@@ -185,6 +185,18 @@ class FollowSerializer(serializers.ModelSerializer):
     def get_recipes_count(self, obj):
         return get_obj_of_current_user(self, obj.author, Recipes, 'count')
 
+    def validate(self, data):
+        follower = self.context['request'].user
+        author_id = self.context['view'].kwargs.get('pk')
+        if follower.id == author_id:
+            raise ValidationError({'errors': 'You cannot subscribe to '
+                                             'yourself.'})
+        elif Follow.objects.filter(follower=follower,
+                                   author_id=author_id).exists():
+            raise ValidationError({'errors': 'You cannot subscribe the '
+                                             'same user twice.'})
+        return data
+
 
 class FavoriteSerializer(serializers.ModelSerializer):
     class Meta:
