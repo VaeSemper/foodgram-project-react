@@ -15,7 +15,7 @@ if os.path.isfile(dotenv_file):
 
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
@@ -68,14 +68,12 @@ WSGI_APPLICATION = 'foodgram_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
-        # 'NAME': os.getenv('DB_NAME', default='mydatabase'),
-        # 'USER': os.getenv('DB_USER', default='mydatabaseuser'),
-        # 'PASSWORD': os.getenv('DB_PASSWORD', default='mypassword'),
-        # 'HOST': os.getenv('DB_HOST', default='127.0.0.1'),
-        # 'PORT': os.getenv('DB_PORT', default='5432'),
+        'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
+        'NAME': os.getenv('DB_NAME', default='postgres'),
+        'USER': os.getenv('DB_USER', default='postgres'),
+        'PASSWORD': os.getenv('DB_PASSWORD', default='1'),
+        'HOST': os.getenv('DB_HOST', default='db'),
+        'PORT': os.getenv('DB_PORT', default='5432'),
     }
 }
 
