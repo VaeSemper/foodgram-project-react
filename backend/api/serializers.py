@@ -12,6 +12,7 @@ User = get_user_model()
 
 
 class CustomUserSerializer(serializers.ModelSerializer):
+    """Overridden default user serializer."""
     is_subscribed = serializers.SerializerMethodField()
 
     class Meta:
@@ -24,6 +25,7 @@ class CustomUserSerializer(serializers.ModelSerializer):
 
 
 class CustomUserCreateSerializer(UserCreateSerializer):
+    """Overridden default djoser's user create serializer."""
     class Meta:
         model = User
         fields = ('id', 'email', 'username', 'first_name', 'last_name',
@@ -32,23 +34,27 @@ class CustomUserCreateSerializer(UserCreateSerializer):
 
 
 class TagsSerializer(serializers.ModelSerializer):
+    """Base tags serializer."""
     class Meta:
         model = Tags
         fields = ('id', 'name', 'color', 'slug',)
 
 
 class TagPrimaryKeyRelatedSerializer(serializers.PrimaryKeyRelatedField):
+    """The tags serializer to represent tags in recipes serializers."""
     def to_representation(self, value):
         return TagsSerializer(value).data
 
 
 class IngredientsSerializer(serializers.ModelSerializer):
+    """Base ingredients serializer."""
     class Meta:
         model = Ingredients
         fields = ('id', 'name', 'measurement_unit',)
 
 
 class IngredientInRecipeSerializer(serializers.ModelSerializer):
+    """Base ingredients in recipe serializer."""
     id = serializers.ReadOnlyField(source='ingredient.id')
     name = serializers.ReadOnlyField(source='ingredient.name')
     measurement_unit = serializers.ReadOnlyField(
@@ -60,6 +66,10 @@ class IngredientInRecipeSerializer(serializers.ModelSerializer):
 
 
 class IngredientsCreateSerializer(serializers.ModelSerializer):
+    """
+    Ingredient serializer which is used for serialization when creating a
+    new recipe or changing the current one.
+    """
     id = serializers.PrimaryKeyRelatedField(queryset=Ingredients.objects.all())
     name = serializers.PrimaryKeyRelatedField(read_only=True)
     measurement_unit = serializers.PrimaryKeyRelatedField(read_only=True)
@@ -70,6 +80,7 @@ class IngredientsCreateSerializer(serializers.ModelSerializer):
 
 
 class RecipesSerializer(serializers.ModelSerializer):
+    """Base recipes serializer."""
     tags = TagPrimaryKeyRelatedSerializer(queryset=Tags.objects.all(),
                                           many=True)
     author = CustomUserSerializer(read_only=True)
@@ -93,6 +104,10 @@ class RecipesSerializer(serializers.ModelSerializer):
 
 
 class RecipeCreateSerializer(serializers.ModelSerializer):
+    """
+    A recipe serializer used to create or modify a recipe. Redefined
+    ingredient fields and methods for creating, updating.
+    """
     tags = TagPrimaryKeyRelatedSerializer(queryset=Tags.objects.all(),
                                           many=True)
     author = CustomUserSerializer(read_only=True)
@@ -115,6 +130,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
             if ingredient_id in ingredients_list:
                 raise ValidationError({'ingredients': 'Ingredients must be '
                                                       'unique.'})
+            ingredients_list.append(ingredient_id)
         return data
 
     def create_ingredients(self, ingredients, recipe):
@@ -150,6 +166,7 @@ class RecipeCreateSerializer(serializers.ModelSerializer):
 
 
 class ShortRecipesSerializer(serializers.ModelSerializer):
+    """Short recipe serializer to display user's recipes."""
     image = Base64ImageField(read_only=True)
 
     class Meta:
@@ -158,6 +175,7 @@ class ShortRecipesSerializer(serializers.ModelSerializer):
 
 
 class FollowSerializer(serializers.ModelSerializer):
+    """Base follow (subscription) serializer."""
     id = serializers.ReadOnlyField(source='author.id')
     email = serializers.ReadOnlyField(source='author.email')
     username = serializers.ReadOnlyField(source='author.username')
@@ -199,12 +217,14 @@ class FollowSerializer(serializers.ModelSerializer):
 
 
 class FavoriteSerializer(serializers.ModelSerializer):
+    """Base user's favorite recipe serializer."""
     class Meta:
         model = FavoriteRecipe
         fields = ('user', 'recipe',)
 
 
 class CartSerializer(serializers.ModelSerializer):
+    """Base user's recipe in shopping cart."""
     class Meta:
         model = RecipeInCart
         fields = ('user', 'recipe',)

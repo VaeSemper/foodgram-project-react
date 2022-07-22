@@ -21,6 +21,7 @@ User = get_user_model()
 
 
 class TagsViewSet(viewsets.ReadOnlyModelViewSet):
+    """Base tag's viewset."""
     queryset = Tags.objects.all()
     serializer_class = TagsSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -28,6 +29,7 @@ class TagsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
+    """"Base ingredient's viewset."""
     queryset = Ingredients.objects.all()
     serializer_class = IngredientsSerializer
     permission_classes = (IsAdminOrReadOnly,)
@@ -37,9 +39,13 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
 
 
 class RecipesViewSet(viewsets.ModelViewSet):
+    """
+    Base recipe's view set. Depending on the requested action, sets the
+    Permission class and selects the required serializer. Added actions for
+    favorite, shopping_cart and download_shopping_cart.
+    """
     queryset = Recipes.objects.all()
     filter_backends = (DjangoFilterBackend,)
-    # filterset_class = RecipeFilter
 
     def get_permissions(self):
         if self.action in ('update', 'partial_update', 'destroy',):
@@ -67,6 +73,10 @@ class RecipesViewSet(viewsets.ModelViewSet):
 
 
 class FollowViewSet(viewsets.ModelViewSet):
+    """
+    Base follow's viewset. Overriding query_set for the user who made the
+    request.
+    """
     serializer_class = FollowSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -75,6 +85,11 @@ class FollowViewSet(viewsets.ModelViewSet):
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
+    """
+    Base subscribe's viewset. Override get_object for the user making the
+    request and the user whose object needs to be accessed. The create and
+    destroy methods have been overridden.
+    """
     serializer_class = FollowSerializer
     permission_classes = (IsAuthenticated,)
     queryset = Follow.objects.all()

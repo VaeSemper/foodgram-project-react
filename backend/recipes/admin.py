@@ -6,6 +6,7 @@ from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes, Tags)
 
 LINES_PER_PAGE = 20
+TEXT_LINE_LIMIT = 100
 
 User = get_user_model()
 
@@ -46,7 +47,7 @@ class RecipesAdmin(admin.ModelAdmin):
 
     @staticmethod
     def recipe_description(obj):
-        return obj.text[:100] + '...'
+        return obj.text[:TEXT_LINE_LIMIT] + '...'
 
 
 @admin.register(Follow)

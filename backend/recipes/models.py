@@ -14,6 +14,7 @@ def user_image_upload_path(instance, filename):
 
 
 class Tags(models.Model):
+    """A model to represent tags."""
     name = models.CharField('tag name', max_length=50, unique=True)
     color = ColorField(default='#FF0000')
     slug = models.SlugField('slug', max_length=50, unique=True)
@@ -27,6 +28,7 @@ class Tags(models.Model):
 
 
 class Ingredients(models.Model):
+    """A model to represent ingredients."""
     name = models.CharField('ingredient name', max_length=50)
     measurement_unit = models.CharField('measurement unit', max_length=10)
 
@@ -50,6 +52,7 @@ class Ingredients(models.Model):
 
 
 class IngredientInRecipe(models.Model):
+    """A model to represent post ingredients in recipe with amount."""
     recipe = models.ForeignKey(
         'Recipes',
         verbose_name='ingredient in recipe',
@@ -70,6 +73,7 @@ class IngredientInRecipe(models.Model):
 
 
 class Recipes(models.Model):
+    """A model to represent recipes."""
     name = models.CharField('recipe name', max_length=100)
     author = models.ForeignKey(
         User,
@@ -103,6 +107,7 @@ class Recipes(models.Model):
 
 
 class Follow(models.Model):
+    """A model to represent follows."""
     follower = models.ForeignKey(User, on_delete=models.CASCADE,
                                  related_name='follower')
     author = models.ForeignKey(User, on_delete=models.CASCADE,
@@ -117,6 +122,7 @@ class Follow(models.Model):
 
 
 class FavoriteRecipe(models.Model):
+    """A model to represent favorite recipes."""
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='fav_user')
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE,
@@ -131,6 +137,7 @@ class FavoriteRecipe(models.Model):
 
 
 class RecipeInCart(models.Model):
+    """A model to represent recipes in shopping cart."""
     user = models.ForeignKey(User, on_delete=models.CASCADE,
                              related_name='buyer')
     recipe = models.ForeignKey(Recipes, on_delete=models.CASCADE,

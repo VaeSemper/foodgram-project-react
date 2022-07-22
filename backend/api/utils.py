@@ -9,6 +9,11 @@ from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
 
 
 def add_delete_obj(request, pk, serializer_obj, model_obj):
+    """
+    Performs the addition or removal (depending on the method) of an object
+    based on the serialized data. Changes output data according to
+    ShortRecipesSerializer.
+    """
     recipe = Recipes.objects.get(pk=pk)
     data = {'user': request.user.pk, 'recipe': recipe.pk}
     serializer = serializer_obj(context={'request': request}, data=data)
@@ -32,6 +37,11 @@ def add_delete_obj(request, pk, serializer_obj, model_obj):
 
 
 def get_obj_of_current_user(serializer, instance, model, method):
+    """
+    Returns the boolean value of the existence of an instance in the
+    database when using the exists method. With the count method, it counts
+    the number of instance entity objects.
+    """
     user = serializer.context['request'].user
     if user.is_anonymous:
         return False
@@ -50,6 +60,10 @@ def get_obj_of_current_user(serializer, instance, model, method):
 
 
 def download_shopping_cart(request):
+    """
+    A .txt file with a shopping list for the user who sent the request is
+    sent to the response.
+    """
     query_set = RecipeInCart.objects.filter(user=request.user)
     if not query_set.exists():
         return Response(status=status.HTTP_204_NO_CONTENT)
