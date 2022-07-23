@@ -98,7 +98,7 @@ class Recipes(models.Model):
     cooking_time = models.PositiveSmallIntegerField(validators=LIMIT_MIN_INT)
 
     class Meta:
-        ordering = ['pub_date']
+        ordering = ['-pub_date']
         verbose_name_plural = 'recipes'
 
     def __str__(self):
