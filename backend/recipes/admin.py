@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
-                            Ingredients, RecipeInCart, Recipes, Tags)
+                            Ingredients, RecipeInCart, Recipes, Tags,)
 
 LINES_PER_PAGE = 20
 TEXT_LINE_LIMIT = 100

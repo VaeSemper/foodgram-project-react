@@ -6,7 +6,7 @@ from rest_framework.exceptions import ValidationError
 
 from api.utils import get_obj_of_current_user
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
-                            Ingredients, RecipeInCart, Recipes, Tags)
+                            Ingredients, RecipeInCart, Recipes, Tags,)
 
 User = get_user_model()
 

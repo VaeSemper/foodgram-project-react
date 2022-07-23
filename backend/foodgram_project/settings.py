@@ -1,11 +1,10 @@
 import os
-from datetime import timedelta
 from pathlib import Path
 
 import dotenv
 
 from foodgram_project.settings_admin_gui import (JAZZMIN_SETTINGS,
-                                                 JAZZMIN_UI_TWEAKS)
+                                                 JAZZMIN_UI_TWEAKS,)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 

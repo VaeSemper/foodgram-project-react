@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
-                            RecipeInCart, Recipes)
+                            RecipeInCart, Recipes,)
 
 
 def add_delete_obj(request, pk, serializer_obj, model_obj):
@@ -34,6 +34,8 @@ def add_delete_obj(request, pk, serializer_obj, model_obj):
             return Response(status=status.HTTP_204_NO_CONTENT)
         return Response({'errors': 'No such object.'},
                         status=status.HTTP_400_BAD_REQUEST)
+    return Response({'errors': 'Method is not allowed.'},
+                    status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
 
 def get_obj_of_current_user(serializer, instance, model, method):

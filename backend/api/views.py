@@ -5,17 +5,17 @@ from rest_framework import filters, status, viewsets
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.permissions import (IsAuthenticated,
-                                        IsAuthenticatedOrReadOnly)
+                                        IsAuthenticatedOrReadOnly,)
 from rest_framework.response import Response
 
 from api.permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
 from api.serializers import (CartSerializer, FavoriteSerializer,
                              FollowSerializer, IngredientsSerializer,
                              RecipeCreateSerializer, RecipesSerializer,
-                             TagsSerializer)
+                             TagsSerializer,)
 from api.utils import add_delete_obj, download_shopping_cart
 from recipes.models import (FavoriteRecipe, Follow, Ingredients, RecipeInCart,
-                            Recipes, Tags)
+                            Recipes, Tags,)
 
 User = get_user_model()
 
