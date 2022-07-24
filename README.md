@@ -18,6 +18,8 @@ The project implemented the following methods:
 The .env file describes the following variables for creating the database
 (postgresql). In particular, the following variables _must_ be set:
 
+- `SERVER_IP` ip address of your server
+- `SERVER_DOMAIN_NAME` domain name of your server
 - `DJANGO_KEY` key to start django project
 - `DB_ENGINE` indicate that we are working with postgresql
 - `DB_NAME` database name
@@ -25,6 +27,18 @@ The .env file describes the following variables for creating the database
 - `POSTGRES_PASSWORD` password to connect to the database (set your own)
 - `DB_HOST` service (container) name
 - `DB_PORT` port for connecting to the database
+
+## Run tests
+
+Before building the image, create venv and run test:
+
+```bash
+cd your_app_directory/foodgram_project
+python3 -m venv venv
+source env/bin/activate
+pip install flake8 pep8-naming flake8-broken-line flake8-return flake8-isort
+python -m flake8
+```
 
 ## Installation
 
@@ -48,14 +62,18 @@ winpty docker-compose exec web python manage.py createsuperuser
 ```
 
 Once everything has started up, you should be able to access the webapp via
-[http://your-server-ip/](http://localhost/) on your host machine:
+[https://fgproject.hopto.org/](https://fgproject.hopto.org/) on your host machine:
 
 ```bash
-open http://your-server-ip/admin
+open https://fgproject.hopto.org/
 ```
 
 ```bash
-open http://your-server-ip/api/docs
+open https://fgproject.hopto.org/admin
+```
+
+```bash
+open https://fgproject.hopto.org/api/docs
 ```
 
 ## Authors
