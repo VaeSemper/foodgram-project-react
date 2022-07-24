@@ -14,9 +14,10 @@ if os.path.isfile(dotenv_file):
 
 SECRET_KEY = os.getenv('DJANGO_KEY')
 
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+ALLOWED_HOSTS = [os.getenv('SERVER_IP', default='127.0.0.1'),
+                 os.getenv('SERVER_DOMAIN_NAME', default='localhost')]
 
 INSTALLED_APPS = [
     'jazzmin',
@@ -67,8 +68,6 @@ WSGI_APPLICATION = 'foodgram_project.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
         'ENGINE': os.getenv('DB_ENGINE', default='django.db.backends.postgresql'),
         'NAME': os.getenv('DB_NAME', default='mydatabase'),
         'USER': os.getenv('POSTGRES_USER', default='mydatabaseuser'),
