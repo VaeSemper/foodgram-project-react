@@ -8,6 +8,7 @@ from rest_framework.permissions import (IsAuthenticated,
                                         IsAuthenticatedOrReadOnly,)
 from rest_framework.response import Response
 
+from api.filters import IngredientsFilter, RecipesFilter
 from api.permissions import IsAdminOrAuthorOrReadOnly, IsAdminOrReadOnly
 from api.serializers import (CartSerializer, FavoriteSerializer,
                              FollowSerializer, IngredientsSerializer,
@@ -35,6 +36,7 @@ class IngredientsViewSet(viewsets.ReadOnlyModelViewSet):
     permission_classes = (IsAdminOrReadOnly,)
     pagination_class = None
     filter_backends = (filters.SearchFilter,)
+    filterset_class = IngredientsFilter
     search_fields = ('name',)
 
 
@@ -46,6 +48,7 @@ class RecipesViewSet(viewsets.ModelViewSet):
     """
     queryset = Recipes.objects.all()
     filter_backends = (DjangoFilterBackend,)
+    filterset_class = RecipesFilter
 
     def get_permissions(self):
         if self.action in ('update', 'partial_update', 'destroy',):
