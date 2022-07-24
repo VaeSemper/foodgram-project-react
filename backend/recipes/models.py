@@ -3,7 +3,8 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MinValueValidator
 from django.db import models
 
-LIMIT_MIN_INT = [MinValueValidator(1)]
+LIMIT_MIN_INT = [MinValueValidator(1, message='Enter a positive value '
+                                              'greater or equal to one')]
 
 User = get_user_model()
 
