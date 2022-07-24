@@ -45,7 +45,7 @@ def get_obj_of_current_user(serializer, instance, model, method):
     database when using the exists method. With the count method, it counts
     the number of instance entity objects.
     """
-    user = serializer.context['request'].user
+    user = serializer.context.get('request').user
     if user.is_anonymous:
         return False
     if method == 'exists':

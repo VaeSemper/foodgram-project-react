@@ -62,6 +62,11 @@ class RecipesViewSet(viewsets.ModelViewSet):
             return RecipesSerializer
         return RecipeCreateSerializer
 
+    def get_serializer_context(self):
+        context = super(RecipesViewSet, self).get_serializer_context()
+        context.update({'request': self.request})
+        return context
+
     @action(detail=True, methods=['POST', 'DELETE'])
     def favorite(self, request, pk=None):
         return add_delete_obj(request, pk, FavoriteSerializer, FavoriteRecipe)
@@ -85,6 +90,11 @@ class FollowViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Follow.objects.filter(follower=self.request.user)
+
+    def get_serializer_context(self):
+        context = super(FollowViewSet, self).get_serializer_context()
+        context.update({'request': self.request})
+        return context
 
 
 class SubscribeViewSet(viewsets.ModelViewSet):
