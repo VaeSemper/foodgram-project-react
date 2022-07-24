@@ -40,7 +40,7 @@ class IngredientInRecipeAdmin(admin.ModelAdmin):
 @admin.register(Recipes)
 class RecipesAdmin(admin.ModelAdmin):
     list_display = ('name', 'author', 'recipe_description', 'cooking_time',
-                    'pub_date',)
+                    'pub_date', 'get_number_in_favorites',)
     list_filter = ('name', 'author', 'tags',)
     list_per_page = LINES_PER_PAGE
     search_fields = ('name',)
@@ -48,6 +48,10 @@ class RecipesAdmin(admin.ModelAdmin):
     @staticmethod
     def recipe_description(obj):
         return obj.text[:TEXT_LINE_LIMIT] + '...'
+
+    @admin.display(description='number of recipe in favorites')
+    def get_number_in_favorites(self, obj):
+        return obj.fav_recipe.filter(recipe=obj).count()
 
 
 @admin.register(Follow)
