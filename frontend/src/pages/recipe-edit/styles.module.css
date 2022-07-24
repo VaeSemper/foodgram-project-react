@@ -76,6 +76,11 @@
   margin-right: 4px;
 }
 
+.ingredientsSeparated {
+  display: inline-block;
+  margin-right: 4px;
+}
+
 .ingredientsAddedItem {
   margin-bottom: 20px;
   display: flex;

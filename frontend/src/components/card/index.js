@@ -31,7 +31,7 @@ const Card = ({
         />
         <TagsContainer tags={tags} />
         <div className={styles.card__time}>
-          <Icons.ClockIcon /> {cooking_time} мин.
+          <Icons.ClockIcon /> {cooking_time} min.
         </div>
         <div className={styles.card__author}>
           <Icons.UserIcon /> <LinkComponent
@@ -55,7 +55,7 @@ const Card = ({
             }}
             disabled={!authContext}
           >
-            {is_in_shopping_cart ? <><Icons.DoneIcon />Рецепт добавлен</> : <><Icons.PlusIcon fill='#4A61DD' /> Добавить в покупки</>}
+            {is_in_shopping_cart ? <><Icons.DoneIcon />Recipe added</> : <><Icons.PlusIcon fill='#4A61DD' /> Add to shopping cart</>}
           </Button>}
           
           {authContext && <Button

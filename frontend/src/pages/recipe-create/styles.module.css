@@ -74,6 +74,11 @@
   margin-right: 4px;
 }
 
+.ingredientsSeparated {
+  display: inline-block;
+  margin-right: 4px;
+}
+
 .fileInput {
   margin-bottom: 72px;
 }
