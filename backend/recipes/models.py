@@ -54,7 +54,7 @@ class IngredientInRecipe(models.Model):
     """A model to represent post ingredients in recipe with amount."""
     recipe = models.ForeignKey(
         'Recipes',
-        verbose_name='ingredient in recipe',
+        verbose_name='recipe',
         related_name='recipe',
         on_delete=models.CASCADE,
     )
