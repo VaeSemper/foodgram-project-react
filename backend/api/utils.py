@@ -1,4 +1,5 @@
 from django.db import IntegrityError
+from django.db.models import F, Sum
 from django.http import HttpResponse
 from rest_framework import status
 from rest_framework.exceptions import ValidationError
@@ -66,33 +67,23 @@ def download_shopping_cart(request):
     A .txt file with a shopping list for the user who sent the request is
     sent to the response.
     """
-    query_set = RecipeInCart.objects.filter(user=request.user)
-    if not query_set.exists():
-        return Response(status=status.HTTP_204_NO_CONTENT)
-    from api.serializers import CartSerializer
-    cart_serializer_data = CartSerializer(query_set, many=True).data
-    shopping_cart = {}
-    for recipe in cart_serializer_data:
-        recipe_id = recipe.get('recipe')
-        ingredients_query = IngredientInRecipe.objects.filter(
-            recipe_id=recipe_id)
-        from api.serializers import IngredientInRecipeSerializer
-        ingredients_data = IngredientInRecipeSerializer(ingredients_query,
-                                                        many=True).data
-        for ingredient in ingredients_data:
-            name = ingredient.get('name')
-            measurement_unit = ingredient.get('measurement_unit')
-            amount = ingredient.get('amount')
-            if name not in shopping_cart:
-                shopping_cart[name] = [measurement_unit, amount]
-            else:
-                shopping_cart[name][1] += amount
+    user = request.user
+    name = 'ingredient__name'
+    units = 'ingredient__measurement_unit'
+    amount = 'amount'
     result_list = []
-    for item in shopping_cart.items():
-        result_list.append('{0} ({1}) - {2}\n'.format(item[0], item[1][0],
-                                                      item[1][1]))
+
+    ingredients = IngredientInRecipe.objects.filter(
+        recipe__recipe_in_cart__user=user).order_by(name)
+    ingredient_list = ingredients.values(name, units).annotate(
+        name=F(name), units=F(units), amount=Sum(amount)).order_by('-amount')
+    for ingredient in ingredient_list:
+        result_list.append('{} ({}) - {}'.format(
+            ingredient.get(name), ingredient.get(units), ingredient.get(amount)
+        ))
+
     file_name = '{}_shop_list.txt'.format(request.user)
-    response = HttpResponse(result_list, status=None)
+    response = HttpResponse('\n'.join(result_list), status=None)
     response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename={}'.format(
         file_name)
