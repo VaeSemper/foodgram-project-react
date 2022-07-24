@@ -1,3 +1,16 @@
+"""
+Jazzmin
+
+Welcome to Jazzmin, intended as a drop-in app to jazz up your django admin
+site, with plenty of things you can easily customise, including a built-in
+UI customizer.
+
+To configure the general behaviour of jazzmin, you can use JAZZMIN_SETTINGS
+within your django settings, below is a full example, with some of the more
+complex items explained below that.
+https://django-jazzmin.readthedocs.io/configuration/
+"""
+
 JAZZMIN_SETTINGS = {
     'welcome_sign': 'Welcome Home, ashen one.',
     'copyright': 'VaeSemper',
