@@ -132,6 +132,6 @@ dmypy.json
 .idea
 
 # Django directories
-/backend/recipes/migrations/
-/backend/static/
-/backend/media/
+migrations/
+static/
+media/
