@@ -16,8 +16,7 @@ SECRET_KEY = os.getenv('DJANGO_KEY')
 
 DEBUG = False
 
-ALLOWED_HOSTS = [os.getenv('SERVER_IP', default='127.0.0.1'),
-                 os.getenv('SERVER_DOMAIN_NAME', default='localhost')]
+ALLOWED_HOSTS = os.getenv('SERVER_DOMAIN_NAME', default='localhost')
 
 INSTALLED_APPS = [
     'jazzmin',
