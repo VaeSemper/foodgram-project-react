@@ -18,7 +18,6 @@ The project implemented the following methods:
 The .env file describes the following variables for creating the database
 (postgresql). In particular, the following variables _must_ be set:
 
-- `SERVER_IP` ip address of your server
 - `SERVER_DOMAIN_NAME` domain name of your server
 - `DJANGO_KEY` key to start django project
 - `DB_ENGINE` indicate that we are working with postgresql
@@ -62,18 +61,22 @@ winpty docker-compose exec web python manage.py createsuperuser
 ```
 
 Once everything has started up, you should be able to access the webapp via
-[https://fgproject.hopto.org/](https://fgproject.hopto.org/) on your host machine:
+[http://fgproject.hopto.org/](http://fgproject.hopto.org/) on your host machine:
 
 ```bash
-open https://fgproject.hopto.org/
+open http://fgproject.hopto.org/
 ```
 
 ```bash
-open https://fgproject.hopto.org/admin
+open http://fgproject.hopto.org/admin/
 ```
 
 ```bash
-open https://fgproject.hopto.org/api/docs
+open http://fgproject.hopto.org/api/
+```
+
+```bash
+open http://fgproject.hopto.org/api/docs/
 ```
 
 ## Authors
