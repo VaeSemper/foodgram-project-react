@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib.auth.admin import UserAdmin
 
+from recipes.admin_tweaks import IngredientsInline
 from recipes.models import (FavoriteRecipe, Follow, IngredientInRecipe,
                             Ingredients, RecipeInCart, Recipes, Tags,)
 
@@ -44,6 +45,7 @@ class RecipesAdmin(admin.ModelAdmin):
     list_filter = ('name', 'author', 'tags',)
     list_per_page = LINES_PER_PAGE
     search_fields = ('name',)
+    inlines = (IngredientsInline,)
 
     @staticmethod
     def recipe_description(obj):
