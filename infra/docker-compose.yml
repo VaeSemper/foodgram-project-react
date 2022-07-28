@@ -17,7 +17,7 @@ services:
       - db
   backend:
     container_name: backend
-    image: vaesemper/foodgram_backend:v1.3
+    image: vaesemper/foodgram_backend:v1.4
     command:
       - /bin/bash
       - -c
