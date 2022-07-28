@@ -1,3 +1,4 @@
+from django.db import models
 from django_filters import AllValuesMultipleFilter, rest_framework as filters
 
 from recipes.models import Ingredients, Recipes
@@ -25,8 +26,15 @@ class RecipesFilter(filters.FilterSet):
 
 
 class IngredientsFilter(filters.FilterSet):
-    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+    name = filters.CharFilter(method='filter_name')
 
     class Meta:
         model = Ingredients
         fields = ('name',)
+
+    def filter_name(self, queryset, name, value):
+        q_exact = queryset.filter(name__iexact=value).annotate(
+            q_ord=models.Value(0, models.IntegerField()))
+        q_contains = queryset.filter(name__icontains=value).annotate(
+            q_ord=models.Value(1, models.IntegerField()))
+        return q_exact.union(q_contains).order_by('q_ord')
