@@ -18,7 +18,7 @@ The project implemented the following methods:
 The .env file describes the following variables for creating the database
 (postgresql). In particular, the following variables _must_ be set:
 
-- `SERVER_DOMAIN_NAME` domain name of your server
+- `ALLOWED_HOSTS` list of your server names
 - `DJANGO_KEY` key to start django project
 - `DB_ENGINE` indicate that we are working with postgresql
 - `DB_NAME` database name
